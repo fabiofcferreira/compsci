@@ -13,13 +13,9 @@ int main() {
 }
 
 int prox_bissexto(int n) {
-  if (n % 4 == 0) return n;
-
   int i = n;
 
-  while(1) {
-    if (i % 4 == 0) return i; 
-    
-    i++;
-  }
+  while((i % 4 != 0) || (i % 100 == 0 && i % 400 != 0)) i++;
+
+  return i;
 }
