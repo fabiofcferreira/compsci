@@ -19,4 +19,6 @@ int main() {
   printPrime(n);
 
   printf("\n");
+
+  return 0;
 }

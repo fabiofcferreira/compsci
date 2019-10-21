@@ -21,4 +21,6 @@ int main() {
   }
 
   printf("%ld\n",counter);
+
+  return 0;
 }

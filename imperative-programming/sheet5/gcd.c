@@ -26,4 +26,6 @@ int main() {
   scanf("%ld %ld", &m, &n);
 
   printf("%ld iterations.\n", mdc(m, n));
+  
+  return 0;
 }

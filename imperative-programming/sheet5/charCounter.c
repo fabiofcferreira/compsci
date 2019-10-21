@@ -13,4 +13,6 @@ int main() {
   }
 
   printf("Phrase contains %ld characters\n", counter);
+  
+  return 0;
 }
