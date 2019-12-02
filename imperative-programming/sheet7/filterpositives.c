@@ -23,9 +23,9 @@ int filtrar_positivos(int vec[], int size) {
 }
 
 int main() {
-  int b[2] = {1, 2};
+  int b[5] = {1, -2, -3, -5, 2};
 
-  printf("%d\n", filtrar_positivos(b, 2));
+  printf("%d\n", filtrar_positivos(b, 5));
 
   return 0;
 }
