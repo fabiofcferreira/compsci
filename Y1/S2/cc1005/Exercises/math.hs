@@ -22,3 +22,7 @@ evenNumber a = if (mod a 2) == 0 then True else False
 
 sign :: Int -> Int
 sign a = if (a < 0) then -1 else 1
+
+-- Last composed function
+lastalt :: [Int] -> Int
+lastalt a = head (reverse a)
