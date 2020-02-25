@@ -21,6 +21,7 @@ droplast a = reverse (drop 1 (reverse a))
 
 -- ex. 6
 binom n k = product [1..n] / (product ([1..k] ++ [1..(n-k)]))
+binomsimplified n k = product [n-k+1..n] ++ (1 / product [1..k])
 
 -- ex. 7
 -- a)
