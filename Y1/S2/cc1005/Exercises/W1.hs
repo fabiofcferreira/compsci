@@ -21,7 +21,7 @@ droplast a = reverse (drop 1 (reverse a))
 
 -- ex. 6
 binom n k = product [1..n] / (product ([1..k] ++ [1..(n-k)]))
-binomsimplified n k = product [n-k+1..n] ++ (1 / product [1..k])
+binomsimplified n k = product [n-k+1..n] / product [1..k]
 
 -- ex. 7
 -- a)
@@ -59,3 +59,7 @@ gradeConditional a = if a <= 9 then "Failed"
 xor :: Bool -> Bool -> Bool
 xor p q = if (p && not q) || (not p && q) then True
           else False
+
+-- ex. 11
+safetail :: [a] -> [a]
+safetail x = if (length x) == 0 then [] else tail x
