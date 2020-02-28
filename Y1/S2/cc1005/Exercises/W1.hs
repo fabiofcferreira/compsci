@@ -70,19 +70,45 @@ xor p q = if (p && not q) || (not p && q) then True
           else False
 
 -- ex. 11
--- safetail :: [a] -> [a]
+safetail :: [a] -> [a]
+
 -- Using IFs
 -- safetail x = if (length x) == 0 then [] else tail x
+
 -- Using cases
 -- safetail x = case length x of
 --   0 -> []
 --   _ -> tail x
 
 -- Using guards
-safetail x
-  | length x == 0 = []
-  | otherwise = tail x
+-- safetail x
+--   | length x == 0 = []
+--   | otherwise = tail x
 
+-- Using patterns
+safetail [] = []
+safetail (x:xs) = xs
 
--- curta :: [a] -> Bool
--- curta = 
+-- ex. 12
+short :: [a] -> Bool
+-- Using guards
+-- short x
+--   | length x == 0 = True
+--   | length x == 1 = True
+--   | length x == 2 = True
+--   | otherwise = False
+
+-- short x = if (length (safetail (safetail x))) > 0 then False else True
+
+-- Using patterns
+short [] = True
+short (x:[]) = True
+short (x:y:[]) = True
+short (x:y:zs) = False
+
+-- ex. 14
+-- a) [char]
+-- b) (char, char, char)
+-- c) [(Bool, Char)]
+-- d) ([Bool], [Char])
+-- e) [a]
