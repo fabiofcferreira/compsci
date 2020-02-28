@@ -48,12 +48,21 @@ simplemin3 a b c = min a (min b c)
 
 -- ex. 9
 gradeConditional :: Int -> String
-gradeConditional a = if a <= 9 then "Failed"
-                     else if a >= 10 && a <= 12 then "OK"
-                     else if a > 13 && a <= 15 then "Good"
-                     else if a > 16 && a <= 18 then "Very good"
-                     else if a > 18 && a <= 20 then "Excellent"
-                     else "Not valid"
+-- Using ifs
+-- gradeConditional a = if a <= 9 then "Failed"
+--                      else if a >= 10 && a <= 12 then "OK"
+--                      else if a > 13 && a <= 15 then "Good"
+--                      else if a > 16 && a <= 18 then "Very good"
+--                      else if a > 18 && a <= 20 then "Excellent"
+--                      else "Not valid"
+
+-- Using guards
+gradeConditional a
+  | a <= 9 = "Failed"
+  | a <= 12 = "OK"
+  | a <= 15 = "Good"
+  | a <= 18 = "Very good"
+  | a <= 20 = "Excellent"
 
 -- ex. 10
 xor :: Bool -> Bool -> Bool
@@ -61,5 +70,19 @@ xor p q = if (p && not q) || (not p && q) then True
           else False
 
 -- ex. 11
-safetail :: [a] -> [a]
-safetail x = if (length x) == 0 then [] else tail x
+-- safetail :: [a] -> [a]
+-- Using IFs
+-- safetail x = if (length x) == 0 then [] else tail x
+-- Using cases
+-- safetail x = case length x of
+--   0 -> []
+--   _ -> tail x
+
+-- Using guards
+safetail x
+  | length x == 0 = []
+  | otherwise = tail x
+
+
+-- curta :: [a] -> Bool
+-- curta = 
