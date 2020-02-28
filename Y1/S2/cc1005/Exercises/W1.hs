@@ -105,10 +105,3 @@ short [] = True
 short (x:[]) = True
 short (x:y:[]) = True
 short (x:y:zs) = False
-
--- ex. 14
--- a) [char]
--- b) (char, char, char)
--- c) [(Bool, Char)]
--- d) ([Bool], [Char])
--- e) [a]
