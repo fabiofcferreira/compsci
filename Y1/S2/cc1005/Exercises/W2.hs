@@ -18,6 +18,5 @@ double a = a * 2
 half x = x / 2
 -- f)
 lower x = x >= 'a' && x <= 'z'
-
 -- i)
 twice f x = f (f x)
