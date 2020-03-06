@@ -1,2 +1,5 @@
 # ignore java compiled files
 *.class
+
+# Ignore test files
+input.txt
