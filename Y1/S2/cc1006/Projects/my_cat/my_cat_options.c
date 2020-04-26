@@ -25,11 +25,14 @@ int isNumbered(char* line) {
   return 0;
 }
 
+// read input from stdin and print every line according to options provided
 int printStdin() {
   char* line = NULL;
   size_t size;
 
+  // line counter
   int lineNum = 1;
+  // read a single line over and over again until EOF
   while (getline(&line, &size, stdin) != -1) {
     if (isNumbered(line)) printf("%6d\t", lineNum++);
 
@@ -39,6 +42,7 @@ int printStdin() {
   return 0;
 }
 
+// read file and print every line according to options provided
 int printFile(char* filePath) {
   char* line;
   size_t size;
@@ -51,7 +55,9 @@ int printFile(char* filePath) {
     return 1;
   }
 
+  // line counter
   int lineNum = 1;
+  // read a single line over and over again until EOF
   while (getline(&line, &size, f) != -1) {
     if (isNumbered(line)) printf("%6d\t", lineNum++);
 
