@@ -2,22 +2,58 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-// #include <unistd.h>
+#include <unistd.h>
+
+int OP_n = 0;
+int OP_b = 0;
+int OP_s = 0;
+
+int isNumbered(char* line) {
+  // non-empty lines that don't contain the \n only
+  if (strlen(line) > 0 && line[0] != '\n') {
+    if (OP_n || OP_b) {
+      return 1;
+    }
+  } else {
+    if (!OP_b && OP_n) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+int printStdin() {
+  char* line = NULL;
+  size_t size;
+
+  int lineNum = 1;
+  while (getline(&line, &size, stdin) != -1) {
+    if (isNumbered(line)) printf("%6d\t", lineNum++);
+
+    printf("%s", line);
+  }
+
+  return 0;
+}
 
 int printFile(char* filePath) {
-  char c;
+  char* line;
+  size_t size;
   FILE* f;
   
   // open file stream
   f = fopen(filePath, "r");
   if (f == NULL) {
-    printf("./my_cat: %s: No such file or directory", filePath);
-    exit(1);
+    printf("./my_cat: %s: No such file or directory\n", filePath);
+    return 1;
   }
 
-  // read every character and print it
-  while ((c = fgetc(f)) != EOF) {
-    fputc((char) c, stdout);
+  int lineNum = 1;
+  while (getline(&line, &size, f) != -1) {
+    if (isNumbered(line)) printf("%6d\t", lineNum++);
+
+    fputs(line, stdout);
   }
 
   // close stream
@@ -27,42 +63,37 @@ int printFile(char* filePath) {
 }
 
 int main(int argc, char **argv) {
-  for (int i = 1; i < argc; i++) {
-    printFile(argv[i]);
+  int opt;
+  extern char *optarg;
+  extern int optind, opterr, optopt;
+
+  // parse arguments
+  while ((opt = getopt(argc, argv, ":if:nbs")) != -1) {
+    switch (opt) {
+      case 'n':
+        OP_n = 1;
+        break;
+      case 'b':
+        OP_b = 1;
+        break;
+      case 's':
+        OP_s = 1;
+        break;
+    }
   }
-  // int opt;
 
-  // while ((opt = getopt(argc, argv, ":if:nbs")) != -1) {
-  //   switch (opt) {
-  //     case 'n':
-  //       printf("n used\n");
-  //       break;
-  //     case 'b':
-  //       printf("b used\n");
-  //       break;
-  //     case 's':
-  //       printf("s used\n");
-  //       break;
-  //     case ':':
-  //       printf("needs value\n");
-  //       break;
-  //     case '?':
-  //       printf("Unknown option: %c\n", optopt);
-  //       break;
-  //   }
-  // }
-
-  // optind is for the extra arguments 
-  // which are not parsed 
-  // for(; optind < argc; optind++){      
-  //     printf(“extra arguments: %s\n”, argv[optind]);  
-  // } 
-  // // read from stdin
-  // if (argc < 2 || strcmp(argv[1], "-") == 0) {
-  //   exit(0);
-  // }
-
-  // printFile(argv[1]);
+  // if there are extra arguments not parsed
+  if (optind < argc) {
+    for(; optind < argc; optind++){      
+      if (strcmp(argv[optind], "-") == 0) {
+        printStdin();
+      } else {
+        printFile(argv[optind]);
+      }
+    }
+  } else {
+    printStdin();
+  }
   
   return 0;
 }
