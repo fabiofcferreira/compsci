@@ -8,6 +8,8 @@ int OP_n = 0;
 int OP_b = 0;
 int OP_s = 0;
 
+// returns 1 if the line should be numbered
+// and 0 otherwise
 int isNumbered(char* line) {
   // non-empty lines that don't contain the \n only
   if (strlen(line) > 0 && line[0] != '\n') {
