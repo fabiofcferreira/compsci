@@ -120,13 +120,15 @@ public class BigNumber {
         int decimal = productResult / 10;
         int remainder = 0;
         int arrayPos = j - (999 - i);
-        
-        // add product result to the result array
-        if (decimal > 0) nresult[arrayPos] += productResult % 10;
-        else nresult[arrayPos] += decimal;
 
-        // add carry to the digit before
-        if (arrayPos >= 1) nresult[arrayPos - 1] += decimal;
+        if (decimal > 0) remainder = productResult % 10;
+
+        if (productResult >= 10) {
+          nresult[arrayPos - 1] += decimal;
+          nresult[arrayPos] += remainder;
+        } else {
+          nresult[arrayPos] += productResult;
+        }
 
         // carry calculation
         for (int a = arrayPos; a >= 0; a--) {
