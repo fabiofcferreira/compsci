@@ -4,32 +4,29 @@
 #include <string.h>
 #include <unistd.h>
 
-int printStdin() {
-  char* line = NULL;
-  size_t size;
-
-  while (getline(&line, &size, stdin) != -1) {
-    printf("%s", line);
-  }
-
-  return 0;
-}
+int useStdin = 0;
 
 int printFile(char* filePath) {
-  char* line;
-  size_t size;
+  char ch;
+  char lastPrintedCh;
   FILE* f;
   
   // open file stream
-  f = fopen(filePath, "r");
-  if (f == NULL) {
-    printf("./my_cat: %s: No such file or directory\n", filePath);
-    return 1;
+  if (useStdin) f = stdin;
+  else {
+    f = fopen(filePath, "r");
+    if (f == NULL) {
+      printf("./my_cat: %s: No such file or directory\n", filePath);
+      return 1;
+    }
   }
 
-  while (getline(&line, &size, f) != -1) {
-    fputs(line, stdout);
+  while ( (ch = fgetc(f)) != EOF ) {
+    fputc(ch, stdout);
+    lastPrintedCh = ch;
   }
+
+  if ( lastPrintedCh != '\n' && ch == EOF ) printf("\n");
 
   // close stream
   fclose(f);
@@ -38,13 +35,22 @@ int printFile(char* filePath) {
 }
 
 int main(int argc, char **argv) {
-  if (argc < 2) {
-    printStdin();
-  } else {
-    for(int i = 1; i < argc; i++) {
-      if (argv[i][0] == '-') printStdin();
-      else printFile(argv[i]);
+  // read from stdin when there are
+  // no arguments
+  if (argc == 1) {
+    useStdin++;
+    printFile("");
+    useStdin--;
+    return 0;
+  }
+
+  for(int i = 1; i < argc; i++) {
+    if (argv[i][0] == '-') {
+      useStdin++;
+      printFile("");
+      useStdin--;
     }
+    else printFile(argv[i]);
   }
 
   return 0;
