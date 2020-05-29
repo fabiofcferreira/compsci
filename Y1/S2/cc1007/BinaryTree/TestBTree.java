@@ -7,13 +7,9 @@ public class TestBTree {
       BTree<Integer> t = LibBTree.readIntTree(in);
 
       // Escrever resultado de chamada a alguns metodos
-      System.out.println("Strict = " + (t.strict() ? "true" : "false"));
-
-      // Escrever nos da arvore seguindo varias ordens possiveis
-      // t.printPreOrder();      
-      // t.printInOrder();
-      // t.printPostOrder();
-      // t.printBFS();
-      // t.printDFS();
+      System.out.println(t.nodesLevel(0));
+      System.out.println(t.nodesLevel(1));
+      System.out.println(t.nodesLevel(2));
+      System.out.println(t.nodesLevel(3));
    }
 }

@@ -63,6 +63,42 @@ public class BTree<T> {
 
   // --------------------------------------------------------
 
+  public T path(String s) {
+    return path(root, s);
+  }
+
+  private T path(BTNode<T> n, String path) {
+    // root edge case
+    if (path == "R") return root.getValue();
+
+    BTNode<T> node = n;
+    for (int i = 0; i < path.length(); i++) {
+      if (path.charAt(i) == 'E') n = n.getLeft();
+      if (path.charAt(i) == 'D') n = n.getRight();
+    }
+
+    return n.getValue();
+  }
+
+  // --------------------------------------------------------
+
+  public int nodesLevel(int k) {
+    return nodesLevel(root, 0, k);
+  }
+
+  private int nodesLevel(BTNode<T> n, int depth, int level) {
+    // base case
+    if (depth == level && n != null) return 1;
+
+    // edge case
+    if (n == null) return 0;
+
+    return nodesLevel(n.getLeft(), depth + 1, level) + nodesLevel(n.getRight(), depth + 1, level);
+  }
+
+
+  // --------------------------------------------------------
+
   // Altura da arvore
   public int depth() {
     return depth(root);
