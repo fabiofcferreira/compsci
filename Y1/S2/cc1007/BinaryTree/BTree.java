@@ -29,6 +29,40 @@ public class BTree<T> {
 
   // --------------------------------------------------------
 
+  // Leafs number
+  public int numberLeafs() {
+    return numberLeafs(root);
+  }
+
+  private int numberLeafs(BTNode<T> n) {
+    // base cases
+    if (root == null || n == null) return 0;
+    // node is a leaf if there is no
+    // left or right child
+    if (n.getLeft() == null && n.getRight() == null) return 1;
+
+    // keep browsing
+    return numberLeafs(n.getLeft()) + numberLeafs(n.getRight());
+  }
+
+  // --------------------------------------------------------
+
+  public boolean strict() {
+    return strict(root);
+  }
+
+  private boolean strict(BTNode<T> n) {
+    // base cases
+    if (root == null || n == null) return true;
+
+    if (n.getLeft() == null && n.getRight() == null) return true;
+    else if (n.getLeft() != null && n.getRight() != null) return strict(n.getLeft()) && strict(n.getRight());
+    
+    return false;
+  }
+
+  // --------------------------------------------------------
+
   // Altura da arvore
   public int depth() {
     return depth(root);
