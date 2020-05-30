@@ -47,6 +47,7 @@ public class BTree<T> {
 
   // --------------------------------------------------------
 
+  // Strict binary tree
   public boolean strict() {
     return strict(root);
   }
@@ -63,6 +64,7 @@ public class BTree<T> {
 
   // --------------------------------------------------------
 
+  // Value held in the node given the path to it
   public T path(String s) {
     return path(root, s);
   }
@@ -82,6 +84,7 @@ public class BTree<T> {
 
   // --------------------------------------------------------
 
+  // Number of nodes at a tree level
   public int nodesLevel(int k) {
     return nodesLevel(root, 0, k);
   }
@@ -96,6 +99,79 @@ public class BTree<T> {
     return nodesLevel(n.getLeft(), depth + 1, level) + nodesLevel(n.getRight(), depth + 1, level);
   }
 
+  // --------------------------------------------------------
+
+  public int internal() {
+    return internal(root);
+  }
+
+  private int internal(BTNode<T> n) {
+    // if node has left or right children nodes, then
+    // it's already an internal node
+    if (n == null) return 0;
+    else if (n.getLeft() == null && n.getRight() == null) return 0;
+    else return 1 + internal(n.getLeft()) + internal(n.getRight());
+  }
+
+  // --------------------------------------------------------
+
+  public void cut(int d) {
+    cut(root, 0, d);
+  }
+
+  private void cut(BTNode<T> n, int depth, int depthCut) {
+    if (n == null) return;
+
+    // remove children nodes if the current depth is the
+    // deleted depth
+    if (depthCut > 0) {
+      if (depth == depthCut - 1) {
+        n.setLeft(null);
+        n.setRight(null);
+      }
+    } else root = null;
+
+    cut(n.getLeft(), depth + 1, depthCut);
+    cut(n.getRight(), depth + 1, depthCut);
+  }
+
+  // --------------------------------------------------------
+
+  public int[] maxLevel() {
+    // maximum of nodes array
+    int[] nodeMax = new int[depth(root) + 1];
+    for (int i = 0; i < nodeMax.length; i++) nodeMax[i] = 0;
+
+    // calculate maximum num of nodes for each depth
+    maxLevel(root, 0, nodeMax);
+
+    // get absolute maximum num of nodes for all depths
+    // and the number of occurrences
+    int maxNum = 0;
+    int maxOccurrences = 0;
+    // find the maximum number of nodes
+    for (int i = 0; i < nodeMax.length; i++) {
+      maxNum = Math.max(maxNum, nodeMax[i]);
+    }
+
+    // find number of occurrences
+    for (int i = 0; i < nodeMax.length; i++) {
+      if (nodeMax[i] == maxNum) maxOccurrences++;
+    }
+
+    return new int[] {maxNum, maxOccurrences};
+  }
+
+  private void maxLevel(BTNode<T> n, int depth, int[] nodeMax) {
+    // null nodes aren't countable nodes
+    if (n == null) return;
+
+    // count one more node
+    nodeMax[depth]++;
+
+    maxLevel(n.getLeft(), depth + 1, nodeMax);
+    maxLevel(n.getRight(), depth + 1, nodeMax);
+  }
 
   // --------------------------------------------------------
 
