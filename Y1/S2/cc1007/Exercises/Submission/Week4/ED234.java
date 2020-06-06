@@ -37,9 +37,8 @@ public class ED234 {
 
   public static void moviesRated(int ratings) {
     BSTree<String> t = new BSTree<String>();
-    String line;
 
-    // read all ratings
+    // read all ratings line by line
     for (int i = 0; i < ratings; i++) {
       String name = in.next();
       int grade = in.nextInt();
@@ -52,7 +51,6 @@ public class ED234 {
 
   public static void mostRatedMovie(int ratings) {
     BSTMap<String, Integer> map = new BSTMap<String, Integer>();
-    String line;
 
     // read all ratings
     for (int i = 0; i < ratings; i++) {
@@ -87,7 +85,6 @@ public class ED234 {
   public static void positiveRatedMovie(int ratings) {
     BSTMap<String, Integer> map = new BSTMap<String, Integer>();
     BSTMap<String, Integer> sumMap = new BSTMap<String, Integer>();
-    String line;
 
     // read all ratings and save ratings and a sum of
     // all ratings of the movie
@@ -121,13 +118,13 @@ public class ED234 {
   }
 
   public static void main(String[] args) {
+    Scanner in = new Scanner(System.in);
+
     int flag;
     int ratings;
 
     flag = in.nextInt();
     ratings = in.nextInt();
-
-    // System.out.println("Flag: "+ flag + " Ratings: " + ratings);
 
     if (flag == 1) moviesRated(ratings);
     else if (flag == 2) mostRatedMovie(ratings);
