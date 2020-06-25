@@ -8,60 +8,51 @@ int OP_n = 0;
 int OP_b = 0;
 int OP_s = 0;
 
-// returns 1 if the line should be numbered
-// and 0 otherwise
-int isNumbered(char* line) {
-  // non-empty lines that don't contain the \n only
-  if (strlen(line) > 0 && line[0] != '\n') {
-    if (OP_n || OP_b) {
-      return 1;
-    }
-  } else {
-    if (!OP_b && OP_n) {
-      return 1;
-    }
-  }
-
-  return 0;
-}
-
-// read input from stdin and print every line according to options provided
-int printStdin() {
-  char* line = NULL;
-  size_t size;
-
-  // line counter
-  int lineNum = 1;
-  // read a single line over and over again until EOF
-  while (getline(&line, &size, stdin) != -1) {
-    if (isNumbered(line)) printf("%6d\t", lineNum++);
-
-    printf("%s", line);
-  }
-
-  return 0;
-}
+int lineNumber = 1;
+char *lastLine;
+int lastLineEmpty = 0; 
+char lastPrintedChar = '\0';
 
 // read file and print every line according to options provided
 int printFile(char* filePath) {
-  char* line;
-  size_t size;
   FILE* f;
   
+  // temporary character variables stats
+  size_t lineSize = 0;
+  size_t lineLength = 0;
+  char *line;
+  
   // open file stream
-  f = fopen(filePath, "r");
-  if (f == NULL) {
-    printf("./my_cat: %s: No such file or directory\n", filePath);
-    return 1;
+  if (strcmp(filePath, "-") == 0) f = stdin;
+  else {
+    f = fopen(filePath, "r");
+    if (f == NULL) {
+      printf("./my_cat: %s: No such file or directory\n", filePath);
+      return 1;
+    }
   }
 
-  // line counter
-  int lineNum = 1;
-  // read a single line over and over again until EOF
-  while (getline(&line, &size, f) != -1) {
-    if (isNumbered(line)) printf("%6d\t", lineNum++);
+  while ( (lineLength = getline(&line, &lineSize, f)) != -1 ) {
+    int newline = (lastPrintedChar == '\n' || lineNumber == 1);
+    int emptyline = strcmp(line, "\n") == 0 ? 1 : 0;
 
-    fputs(line, stdout);
+    // s flag basically serves to ignore consecutive empty lines
+    if (OP_s) {
+      if ( emptyline && lastLineEmpty ) continue;
+    }
+
+    // if there are more than 2 consecutive empty lines, do nothing
+    if (OP_b && strcmp(line, "\n") != 0 && newline) {
+      printf("%6d\t", lineNumber++);
+    } else {
+      if (OP_n && newline) {
+        printf("%6d\t", lineNumber++);
+      }
+    }
+
+    printf("%s", line);
+    lastPrintedChar = line[strlen(line) - 1];
+    lastLineEmpty = strcmp(line, "\n") == 0 ? 1 : 0;
   }
 
   // close stream
@@ -76,7 +67,7 @@ int main(int argc, char **argv) {
   extern int optind, opterr, optopt;
 
   // parse arguments
-  while ((opt = getopt(argc, argv, ":if:nbs")) != -1) {
+  while ((opt = getopt(argc, argv, ":nbs")) != -1) {
     switch (opt) {
       case 'n':
         OP_n = 1;
@@ -90,18 +81,9 @@ int main(int argc, char **argv) {
     }
   }
 
-  // if there are extra arguments not parsed
-  if (optind < argc) {
-    for(; optind < argc; optind++){      
-      if (strcmp(argv[optind], "-") == 0) {
-        printStdin();
-      } else {
-        printFile(argv[optind]);
-      }
-    }
-  } else {
-    printStdin();
+  for (int i = optind; i < argc; i++) {
+    printFile(argv[i]);
   }
-  
+
   return 0;
 }
