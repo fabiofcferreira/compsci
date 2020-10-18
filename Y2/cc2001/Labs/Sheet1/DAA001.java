@@ -17,5 +17,7 @@ class DAA001 {
     }
 
     System.out.println(counter);
+
+    in.close();
   }
 }

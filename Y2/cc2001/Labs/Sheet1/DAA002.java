@@ -1,6 +1,4 @@
-import java.lang.Math;
 import java.util.Scanner;
-
 
 public class DAA002 {
   public static void main(String[] args) {
@@ -19,6 +17,8 @@ public class DAA002 {
 
       System.out.println(number);
     }
+
+    in.close();
   }
 
   public static int digitSum(int number) {
