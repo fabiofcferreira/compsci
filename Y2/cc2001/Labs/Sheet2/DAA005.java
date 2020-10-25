@@ -5,7 +5,6 @@ public class DAA005 {
 
   static int f;
 
-
   public static void main(String[] args) {
     FastScanner in = new FastScanner(System.in);
 
