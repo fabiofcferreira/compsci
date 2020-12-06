@@ -1,0 +1,490 @@
+# Exercises
+
+-- DAA001
+import java.util.Scanner;
+
+class DAA001 {
+  public static void main(String[] args) {
+    Scanner in = new Scanner(System.in);
+
+    int size = 0;
+    int number;
+    int counter = 0;
+
+    size = in.nextInt();
+
+    for (int i = 0; i < size; i++) {
+      number = in.nextInt();
+
+      if (number == 42) counter++;
+    }
+
+    System.out.println(counter);
+
+    in.close();
+  }
+}
+
+-- DAA002
+import java.util.Scanner;
+
+public class DAA002 {
+  public static void main(String[] args) {
+    Scanner in = new Scanner(System.in);
+
+    int tests = in.nextInt();
+
+    for (int i = 0; i < tests; i++) {
+      int n = in.nextInt();
+      int k = in.nextInt();
+
+      int number = n+1;
+      while (digitSum(number) != k) {
+        number++;
+      }
+
+      System.out.println(number);
+    }
+
+    in.close();
+  }
+
+  public static int digitSum(int number) {
+    int n = number;
+    int sum = 0;
+
+    while (n != 0) {
+      sum += n % 10;
+      n /= 10;
+    }
+
+    return sum;
+  }
+}
+
+-- DAA003
+import java.util.Scanner;
+
+public class DAA003 {
+  // Helper functions
+  public static int charValue(Character ch) {
+    if (Character.isDigit(ch)) {
+      return Character.getNumericValue(ch);
+    } else {
+      int d = ch - 'A';
+
+      if (d >= 25) d -= 1;
+      if (d >= 23) d -= 1;
+      if (d >= 11) d -= 1;
+
+      return d;
+    }
+  }
+
+  // Plate functions
+  public static int getPlateGeneration(String plate) {
+    // 1st generation
+    if (Character.isAlphabetic(plate.charAt(0)) && Character.isDigit(plate.charAt(3)) && Character.isDigit(plate.charAt(6))) {
+      return 1;
+    }
+
+    // 2nd generation
+    if (Character.isDigit(plate.charAt(0)) && Character.isDigit(plate.charAt(3)) && Character.isAlphabetic(plate.charAt(6))) {
+      return 2;
+    }
+
+    // 3rd generation
+    if (Character.isDigit(plate.charAt(0)) && Character.isAlphabetic(plate.charAt(3)) && Character.isDigit(plate.charAt(6))) {
+      return 3;
+    }
+
+    // 4th generation
+    return 4;
+  }
+
+  public static long getGenerationMaxPlates(int generation) {
+    if (generation == 1 || generation == 2 || generation == 3) {
+      return 5290000;
+    } else if (generation == 4) {
+      return 27984100;
+    }
+
+    return 0;
+  }
+
+  public static long getPlateNumber(String plate) {
+    int generation = getPlateGeneration(plate);
+    long number = 0;
+
+    String chars = plate.replace("-", "");
+
+    if (generation == 1) {
+      number = (charValue(chars.charAt(0)) * 23 * 10000) +
+        (charValue(chars.charAt(1)) * 10000) +
+        (charValue(chars.charAt(2)) * 1000) +
+        (charValue(chars.charAt(3)) * 100) + 
+        (charValue(chars.charAt(4)) * 10) +
+        (charValue(chars.charAt(5)) * 1);
+    } else if (generation == 2) {
+      number = (charValue(chars.charAt(4)) * 23 * 10000) +
+        (charValue(chars.charAt(5)) * 10000) +
+        (charValue(chars.charAt(0)) * 1000) +
+        (charValue(chars.charAt(1)) * 100) + 
+        (charValue(chars.charAt(2)) * 10) +
+        (charValue(chars.charAt(3)) * 1);
+    } else if (generation == 3) {
+      number = (charValue(chars.charAt(2)) * 23 * 10000) +
+        (charValue(chars.charAt(3)) * 10000) +
+        (charValue(chars.charAt(0)) * 1000) +
+        (charValue(chars.charAt(1)) * 100) + 
+        (charValue(chars.charAt(4)) * 10) +
+        (charValue(chars.charAt(5)) * 1);
+    } else if (generation == 4) {
+      number = (charValue(chars.charAt(0)) * 23 * 23 * 23 * 100) +
+        (charValue(chars.charAt(1)) * 23 * 23 * 100) +
+        (charValue(chars.charAt(4)) * 23 * 100) +
+        (charValue(chars.charAt(5)) * 100) + 
+        (charValue(chars.charAt(2)) * 10) +
+        (charValue(chars.charAt(3)) * 1);
+    }
+
+    // Add plate count offset
+    for (int i = 1; i < generation; i++) {
+      number += getGenerationMaxPlates(i);
+    }
+
+    return number;
+  }
+
+  public static long plateDifference(String plate1, String plate2) {
+    long p1Num = getPlateNumber(plate1);
+    long p2Num = getPlateNumber(plate2);
+
+    return Math.abs(p1Num - p2Num);
+  }
+
+  public static void main(String[] args) {
+    Scanner in = new Scanner(System.in);
+
+    int tests = in.nextInt();
+    for (int i = 0; i < tests; i++) {
+      String plate1 = in.next();
+      String plate2 = in.next();
+
+      System.out.println(plateDifference(plate1, plate2));
+    }
+
+    in.close();
+  }
+}
+
+-- DAA005
+public class DAA005 {
+  static int n;
+  static int[] energies;
+  static int[] sum;
+
+  static int f;
+
+  public static void main(String[] args) {
+    FastScanner in = new FastScanner(System.in);
+
+    n = in.nextInt();
+    energies = new int[n];
+    sum = new int[n+1];
+
+    for (int i = 0; i < n; i++) {
+      energies[i] = in.nextInt();
+      sum[i+1] = energies[i] + sum[i];
+    }
+
+    f = in.nextInt();
+    for (int i = 0; i < f; i++) {
+      int start = in.nextInt();
+      int end = in.nextInt();
+
+      FastPrint.out.println(sum[end] - sum[start-1]);
+    }
+
+    FastPrint.out.close();
+  }
+}
+
+-- DAA009
+import java.io.*;
+import java.util.*;
+
+class Char implements Comparable<Char> {
+  public int dictionaryIndex;
+  public int firstOccurrence;
+  public int counter;
+
+  Char () {
+    dictionaryIndex = -1;
+    firstOccurrence = -1;
+    counter = 0;
+  }
+
+  @Override
+  public int compareTo(Char c) {
+    if (counter < c.counter) return +1;
+    if (counter > c.counter) return -1;
+
+    if (firstOccurrence < c.firstOccurrence) return -1;
+    if (firstOccurrence > c.firstOccurrence) return +1;
+
+    return 0;
+  }
+}
+
+public class DAA009 {
+  public static void main(String[] args) {
+    FastScanner in = new FastScanner(System.in);
+
+    Char[] frequencies = new Char[26];
+    for (int i = 0; i < 26; i++) {
+      frequencies[i] = new Char();
+    }
+
+    // Read DNA sequence
+    String sequence = in.nextLine();
+    int dictionaryIndex = -1;
+
+    for (int i = 0; i < sequence.length(); i++) {
+      dictionaryIndex = sequence.charAt(i) - 'A';
+      
+      // Set dictionary index (if not set previously)
+      if (frequencies[dictionaryIndex].dictionaryIndex == -1) {
+        frequencies[dictionaryIndex].dictionaryIndex = dictionaryIndex;
+      }
+
+      // Set first occurrence index (if not set previously)
+      if (frequencies[dictionaryIndex].firstOccurrence == -1) {
+        frequencies[dictionaryIndex].firstOccurrence = i;
+      }
+
+      // Increment character count
+      frequencies[dictionaryIndex].counter++;
+    }
+
+    // Order by frequency
+    Arrays.sort(frequencies);
+
+    for (int i = 0; i < 26; i++) {
+      if (frequencies[i].counter > 0) {
+        FastPrint.out.printf("%c %d\n", 'A' + frequencies[i].dictionaryIndex, frequencies[i].counter);
+      }
+    }
+
+    // Close print buffer
+    FastPrint.out.close();
+  }
+}
+
+-- DAA010
+import java.util.*;
+
+public class DAA010 {
+  public static int combinations(int n) {
+    return (n * (n-1))/2;
+  }
+
+  public static int[] nearestBSearch(int[] arr, int key) {
+    int middle = arr.length / 2;
+    int low = 0;
+    int high = arr.length-1;
+
+    while (low < high) {
+      middle = low + ((high - low) / 2);
+      
+      if (arr[middle] >= key) {
+        high = middle;
+      } else {
+        low = middle + 1;
+      }
+    }
+
+    if (low - 1 >= 0) {
+      if (Math.abs((arr[low-1] - key)) < Math.abs((arr[low] - key))) return new int[] { arr[low - 1] };
+      if (Math.abs((arr[low-1] - key)) == Math.abs((arr[low] - key))) return new int[] { arr[low - 1], arr[low] };
+    }
+
+    return new int[] { arr[low] };
+  }
+
+  public static void main(String[] args) {
+    FastScanner in = new FastScanner(System.in);
+
+    int n;
+    int[] set;
+    int[] sums;
+    int q = 0;
+    int qSum = 0;
+
+    n = in.nextInt();
+    set = new int[n];
+    sums = new int[combinations(n)];
+
+    // Read set of numbers
+    for (int i = 0; i < n; i++) { 
+      set[i] = in.nextInt();
+    }
+
+    // Calculate all possible sums
+    int sumIndex = 0;
+    for (int i = 0; i < n; i++) {
+      for (int j =  i + 1; j < n; j++) {
+        sums[sumIndex] = set[i] + set[j];
+
+        sumIndex++;
+      }
+    }
+
+    // Sort sums
+    Arrays.sort(sums);
+
+    // Read number of questions
+    q = in.nextInt();
+
+    // Read every question and answer it
+    for (int i = 0; i < q; i++) {
+      qSum = in.nextInt();
+
+      int[] answers = nearestBSearch(sums, qSum);
+      
+      for (int a = 0; a < answers.length; a++) {
+        if (answers[a] >= 0) {
+          FastPrint.out.printf("%d", answers[a]);
+
+          if (a < answers.length-1 && answers[a+1] >= 0) {
+            FastPrint.out.printf(" ");
+          }
+        }
+      }
+
+      FastPrint.out.printf("\n");
+    }
+
+    FastPrint.out.close();
+  }
+}
+
+-- DAA018
+import java.util.*;
+
+public class DAA018 {
+  public static void numCoins(int[] coins, int sum) {
+    int[] minCoins = new int[sum+1];
+    int[] coinsUsed = new int[sum+1];
+
+    // Find minimum numbers of coins needed to complete required sum
+    minCoins[0] = 0;
+    for (int i = 1; i <= sum; i++) {
+      minCoins[i] = 1000000000;
+
+      for (int j = 0; j < coins.length; j++) {
+        if (coins[j] <= i && 1 + minCoins[i - coins[j]] < minCoins[i]) {
+          coinsUsed[i] = coins[j];
+          minCoins[i] = 1 + minCoins[i - coins[j]];
+        }
+      }
+    }
+
+    // Add every single coin
+    int r = sum;
+    int index = 0;
+    int[] orderedCoins = new int[minCoins[sum]];
+    while (r != 0) {
+      orderedCoins[index++] = coinsUsed[r];
+
+      r -= coinsUsed[r];
+    }
+    
+    // Sort coins
+    Arrays.sort(orderedCoins);
+
+    // Print coins by ascending order
+    FastPrint.out.printf("%d: [%d] ", sum, minCoins[sum]);
+    for (int i = 0; i < orderedCoins.length; i++) {
+      FastPrint.out.printf("%d", orderedCoins[i]);
+
+      if (i < orderedCoins.length-1) {
+        FastPrint.out.printf(" ");
+      }
+    }
+
+    FastPrint.out.printf("\n");
+  }
+
+  public static void main(String[] args) {
+    FastScanner in = new FastScanner(System.in);
+    
+    int numCoins = 0;
+    int[] coins;
+    int questions = 0;
+    int questionSum = 0;
+
+    numCoins = in.nextInt();
+    coins = new int[numCoins];
+
+    // Read each coin value
+    for (int i = 0; i < numCoins; i++) {
+      coins[i] = in.nextInt();
+    }
+
+    // Read questions and answer them
+    questions = in.nextInt();
+    for (int i = 0; i < questions; i++) {
+      questionSum = in.nextInt();
+
+      numCoins(coins, questionSum);
+    }
+
+    FastPrint.out.close();
+  }
+}
+
+# Helpers
+
+-- Pesquisa binária num array ordenado
+
+bsearch(v, low, high, key)
+  Enquanto (low ≤ high ) fazer
+    middle ← low + (high − low)/2
+    Se (key = v[middle]) retorna(middle)
+    Senão se (key < v[middle]) high ← middle − 1
+    Senão low ← middle + 1
+  retorna(-1)
+
+-- Pesquisa binária para condição
+
+bsearch(low, high, condicao)
+  Enquanto (low < high ) fazer
+    middle ← low + (high − low)/2
+    Se (condicao(middle) = sim) high ← middle
+    Senão low ← middle + 1
+  Se (condicao(low) = nao) retorna(-1)
+  retorna(low)
+
+-- PD
+Programação Dinâmica
+Uma técnica algorítmica, normalmente usada em problemas de
+optimização, que é baseada em guardar os resultados de subproblemas
+em vez de os recalcular.
+Técnica algorítmica: método geral para resolver problemas que têm
+algumas características em comum
+Problema de Optimização: encontrar a ”melhor” solução entre
+todas as solucções possíveis, segundo um determinado critério (função
+objectivo). Geralmente descobrir um máximo ou mínimo.
+
+-- PD Steps
+Guia para resolver com PD
+1 Caracterizar a solução ótima do problema
+2 Definir recursivamente a solução ótima, em função de soluções
+ótimas de subproblemas
+3 Calcular as soluções de todos os subproblemas: ”de trás para a
+frente” ou com ”memoization”
+4 Reconstruir a solução ótima, baseada nos cálculos efectuados
+(opcional - apenas se for necessário)
+
+

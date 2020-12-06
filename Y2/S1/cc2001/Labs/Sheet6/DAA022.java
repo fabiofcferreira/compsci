@@ -13,8 +13,6 @@ class Node {
 }
 
 class DAA022 {
-
-  // Ler input em preorder
   static Node readPreOrder(FastScanner in) {
     int v = in.nextInt();
     Node aux = new Node(v);
@@ -25,7 +23,6 @@ class DAA022 {
     return aux;
   }
 
-  // Menor valor da arvore
   static int minimum(Node t) {
     if (t.isNull) return Integer.MAX_VALUE;
     int minLeft  = minimum(t.left);
@@ -33,7 +30,6 @@ class DAA022 {
     return Math.min(t.value, Math.min(minLeft, minRight));
   }
 
-  // Maior valor da arvore
   static int maximum(Node t) {
     if (t.isNull) return Integer.MIN_VALUE;
     int minLeft  = maximum(t.left);
@@ -41,7 +37,6 @@ class DAA022 {
     return Math.max(t.value, Math.max(minLeft, minRight));
   }
 
-  // Quantidade de nos (internos)
   static int size(Node t) {
     if (t.isNull) return 0;
     return 1 + size(t.left) + size(t.right);
@@ -96,9 +91,6 @@ class DAA022 {
       left++;
       right++;
     }
-
-    // FastPrint.out.printf("From node %d to its lefts there are %d black nodes\n", t.left.value, left);
-    // FastPrint.out.printf("From node %d to its lefts there are %d black nodes\n", t.right.value, right);
 
     if (left != right) return -1;
     else return left;
