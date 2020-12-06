@@ -15,20 +15,20 @@ public class DAA025 {
   }
     
   public static void main(String args[]) {
-    FastScanner stdin = new FastScanner(System.in);
+    FastScanner in = new FastScanner(System.in);
     
     // Read number of nodes
-    n = stdin.nextInt();
+    n = in.nextInt();
     
     // Create adjacent and visited arrays
 	  adj = new boolean[n+1][n+1];
     visited = new boolean[n+1];
     
     // Read number of edges and read edges
-	  int edges = stdin.nextInt();	
+	  int edges = in.nextInt();	
 	  for (int i = 0; i < edges; i++) {
-	    int a = stdin.nextInt();
-      int b = stdin.nextInt();
+	    int a = in.nextInt();
+      int b = in.nextInt();
 
 	    adj[a][b] = adj[b][a] = true;
     }
