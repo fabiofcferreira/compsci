@@ -31,7 +31,7 @@ class Graph {
 	  nodes[b].adj.add(a);
   }
 
-  // Algoritmo de pesquisa em largura
+  // BFS algorithm
   public int bfs(int v) {
     // Create list of unvisited nodes
 	  LinkedList<Integer> q = new LinkedList<Integer>();
@@ -49,8 +49,7 @@ class Graph {
 	    int u = q.removeFirst();
       maxDistance = Math.max(maxDistance, nodes[u].distance);
 	   
-      // System.out.println(u + " [dist=" + nodes[u].distance + "]");
-	    for (int w : nodes[u].adj) {
+      for (int w : nodes[u].adj) {
         if (!nodes[w].visited) {
 		      q.add(w);
 		      nodes[w].visited = true;
