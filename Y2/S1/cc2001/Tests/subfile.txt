@@ -1,4 +1,4 @@
-# Exercises
+-- SUBMISSION FILE
 
 -- DAA001
 import java.util.Scanner;
@@ -446,6 +446,13 @@ public class DAA018 {
 
 # Helpers
 
+----------------------------------------------------------------------------------
+TEST 2 THEORY
+----------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------
+BS
+----------------------------------------------------------------------------------
 -- Pesquisa binária num array ordenado
 
 bsearch(v, low, high, key)
@@ -456,6 +463,10 @@ bsearch(v, low, high, key)
     Senão low ← middle + 1
   retorna(-1)
 
+
+----------------------------------------------------------------------------------
+CONDITIONAL BS
+----------------------------------------------------------------------------------
 -- Pesquisa binária para condição
 
 bsearch(low, high, condicao)
@@ -466,6 +477,9 @@ bsearch(low, high, condicao)
   Se (condicao(low) = nao) retorna(-1)
   retorna(low)
 
+----------------------------------------------------------------------------------
+DYNAMIC PROGRAMMING
+----------------------------------------------------------------------------------
 -- PD
 Programação Dinâmica
 Uma técnica algorítmica, normalmente usada em problemas de
@@ -487,4 +501,1035 @@ frente” ou com ”memoization”
 4 Reconstruir a solução ótima, baseada nos cálculos efectuados
 (opcional - apenas se for necessário)
 
+----------------------------------------------------------------------------------
+CODE
+----------------------------------------------------------------------------------
+-- DAA021
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.Map;
 
+public class DAA021 {
+  public static void main(String[] args) {
+    FastScanner in = new FastScanner(System.in);
+
+    int a;
+    int r;
+
+    String action;
+    int energy;
+    int counter;
+    TreeMap<Integer, Integer> energies = new TreeMap<Integer, Integer>();
+
+    // Read additions and removals
+    a = in.nextInt();
+    r = in.nextInt();
+
+    for (int i = 0; i < a+r; i++) {
+      action = in.next();
+
+      // Add a new bakugan
+      if (action.compareTo("BAK") == 0) {
+        energy = in.nextInt();
+
+        // Add one more bakugan with an existing energy
+        if (energies.containsKey(energy)) {
+          energies.put(energy, energies.get(energy) + 1);
+        } else {
+          energies.put(energy, 1);
+        }
+      }
+
+      // Remove a minimum value bakugan
+      if (action.compareTo("MIN") == 0) {
+        FastPrint.out.println(energies.firstKey());
+
+        counter = energies.get(energies.firstKey());
+        if (counter-1 == 0) {
+          energies.remove(energies.firstKey());
+        } else {
+          energies.put(energies.firstKey(), counter-1);
+        }
+      }
+
+      // Remove a maximum value bakugan
+      if (action.compareTo("MAX") == 0) {
+        FastPrint.out.println(energies.lastKey());
+
+        counter = energies.get(energies.lastKey());
+        if (counter-1 == 0) {
+          energies.remove(energies.lastKey());
+        } else {
+          energies.put(energies.lastKey(), counter-1);
+        }
+      }
+    }
+
+    FastPrint.out.close();
+  }
+}
+
+-- DAA022
+// Tree node
+class Node {
+  boolean isBlack;
+  boolean isNull;
+  int value;
+  Node left, right;
+
+  Node(int v) {
+    isNull  = (v==0);
+    isBlack = (v>=0);
+    value   = Math.abs(v);
+  }
+}
+
+class DAA022 {
+  static Node readPreOrder(FastScanner in) {
+    int v = in.nextInt();
+    Node aux = new Node(v);
+    if (v!=0) {
+      aux.left  = readPreOrder(in);
+      aux.right = readPreOrder(in);
+    }
+    return aux;
+  }
+
+  static int minimum(Node t) {
+    if (t.isNull) return Integer.MAX_VALUE;
+    int minLeft  = minimum(t.left);
+    int minRight = minimum(t.right);
+    return Math.min(t.value, Math.min(minLeft, minRight));
+  }
+
+  static int maximum(Node t) {
+    if (t.isNull) return Integer.MIN_VALUE;
+    int minLeft  = maximum(t.left);
+    int minRight = maximum(t.right);
+    return Math.max(t.value, Math.max(minLeft, minRight));
+  }
+
+  static int size(Node t) {
+    if (t.isNull) return 0;
+    return 1 + size(t.left) + size(t.right);
+  }
+
+  // ---------------------------------------------------
+
+  static boolean isBST(Node t, int min, int max) {
+    if (t.isNull) return true;
+
+    if (t.value < min)
+      return false;
+    
+    if (t.value > max)
+      return false;
+
+    return isBST(t.left, min, t.value) && isBST(t.right, t.value, max);
+  }
+
+  static boolean isRootBlack(Node t) {
+    if (t.isBlack) return true;
+    else return false;
+  }
+
+  static boolean hasRedProperty(Node t) {
+    if (t.isNull) return true;
+
+    if (!t.isBlack) {
+      if (!(t.left.isBlack && t.right.isBlack)) return false;
+      else return hasRedProperty(t.left) && hasRedProperty(t.right);
+    } else {
+      return hasRedProperty(t.left) && hasRedProperty(t.right);
+    }
+  }
+
+  static boolean hasLeafProperty(Node t) {
+    if (t.isNull) {
+      if (t.isBlack) return true;
+      else return false;
+    } else return hasLeafProperty(t.left) && hasLeafProperty(t.right);
+  }
+
+  static int blackNodesUntilLeaf(Node t) {
+    if (t.isNull) return 0;
+
+    // Count black nodes from left and right nodes to leafs
+    int left = blackNodesUntilLeaf(t.left);
+    int right = blackNodesUntilLeaf(t.right);
+
+    // If the current node is black, it is counted too
+    if (t.isBlack) {
+      left++;
+      right++;
+    }
+
+    if (left != right) return -1;
+    else return left;
+  }
+
+  static boolean hasBlackProperty(Node t) {
+    if (t.isNull) return true;
+
+    // Count black nodes from left and right nodes to leafs
+    int left = blackNodesUntilLeaf(t.left);
+    int right = blackNodesUntilLeaf(t.right);
+
+    // If the current node is black, it is counted too
+    if (t.isBlack) {
+      left++;
+      right++;
+    }
+
+    if (left != right) return false;
+    else return true;
+  }
+
+  static boolean isRedBlack(Node t) {
+    return isBST(t, -1000000, 1000000) &&
+      isRootBlack(t) &&
+      hasRedProperty(t) &&
+      hasLeafProperty(t) &&
+      hasBlackProperty(t);
+  }
+  
+  public static void main(String args[]) {
+    FastScanner in = new FastScanner(System.in);
+
+    Node root;
+    int n = in.nextInt();
+    for (int i = 0; i < n; i++) {
+      root = readPreOrder(in);
+    
+      if (isRedBlack(root)) {
+        FastPrint.out.println("SIM");
+      } else {
+        FastPrint.out.println("NAO");
+      }
+    }
+
+    FastPrint.out.close();
+  }
+}
+
+
+----------------------------------------------------------------------------------
+TEST 2 THEORY
+----------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------
+GRAPHS
+----------------------------------------------------------------------------------
+-- Graphs
+
+Algumas Vantagens/Desvantagens:
+Matriz de Adjacências:
+- Muito simples de implementar
+- Rápida para ver se existe ligação entre dois nós - O(1)
+- Lenta para percorrer n´os adjacentes - O(|V|)
+- Elevado desperd´ıcio de mem´oria (em grafos esparsos) - O(|V|^2)
+- Grafo pesado implica apenas armazenar peso na matriz
+- Adicionar/remover ligações é só mudar célula da matriz - O(1)
+
+Lista de Adjacências:
+- Lenta para ver se existe ligação entre nós u e v - O(grau(u))
+- Rápida para percorrer nós adjacentes - O(grau(u))
+- Memória bem aproveitada - O(|V| + |E|)
+- Grafo pesado implica adicionar um campo à lista
+- Remover ligação (u, v) implica percorrer a lista - O(grau(u))
+
+Nota: podemos usar por exemplo BSTs (set/map) para melhorar
+eficiência da pesquisa/remoção para O(log grau(u))
+
+Ordenação topológica:
+
+ordem ← lista vazia
+marcar todos os nós como não visitados
+Para todos os nós v do grafo fazer
+  Se v ainda n˜ao foi visitado ent˜ao
+    dfs(v)
+escrever(ordem)
+
+dfs(nó v):
+  marcar v como visitado
+  Para todos os nós w adjacentes a v fazer
+    Se w ainda nao foi visitado então
+      dfs(w)
+  adicionar v ao início da lista ordem
+
+----------------------------------------------------------------------------------
+DFS
+----------------------------------------------------------------------------------
+-- Tabela de DFS:
+Vamos acrescentar mais 2 propriedades aos nós numa visita dfs:
+- num(i): ordem em que i é visitado
+- low(i): menor num(i) atingível pela subárvore que começa em i.
+    É o mínimo entre:
+      - num(i)
+      - menor num(v) entre todos os back edges (i, v)
+      - menor low(v) entre todos os tree edges (i, v)
+
+----------------------------------------------------------------------------------
+DFS IMPLEMENTATION
+----------------------------------------------------------------------------------
+import java.util.*;
+import java.io.*;
+
+public class DFS {
+    static int n;              // Numero de nos do grafo
+    static boolean adj[][];    // Matriz de adjacencias
+    static boolean visited[];  // Que nos ja foram visitados?
+
+    static void dfs(int v) {
+	System.out.print(v + " ");
+	visited[v] = true;
+	for (int i=1; i<=n; i++)
+	    if (adj[v][i] && !visited[i])
+		dfs(i);
+    }
+    
+    public static void main(String args[]) {
+	Scanner stdin = new Scanner(System.in);
+	
+	n = stdin.nextInt();
+	adj     = new boolean[n+1][n+1];
+	visited = new boolean[n+1];	
+	int edges = stdin.nextInt();	
+	for (int i=0; i<edges; i++) {
+	    int a = stdin.nextInt();
+	    int b = stdin.nextInt();
+	    adj[a][b] = adj[b][a] = true;
+	}
+
+	dfs(1); // Pesquisa em profundidade a partir do no 1
+	System.out.println();       
+    }
+}
+
+----------------------------------------------------------------------------------
+BFS
+----------------------------------------------------------------------------------
+-- Encontrar pontos de articulação (Explicação e Pseudo-código)
+Uma ideia:
+
+1. Aplicar DFS no grafo e obter a árvore de DFS
+2. Se um nó v tem um filho w que não tem nenhum caminho para
+  um antecessor de v, então v é um ponto de articulação! (pois
+  retirá-lo desliga w do resto do grafo)
+    Isto corresponde a verificar que low[w] ≥ num[v]
+3. A unica excepção é a raiz da pesquisa. Se tiver mais que um filho...
+então é também ponto de articulação!
+
+----------------------------------------------------------------------------------
+BFS IMPLEMENTATION
+----------------------------------------------------------------------------------
+
+dfs art(nó v):
+  num[v] ← low[v] ← index ; index ← index + 1 ; S.push(v)
+  Para todos os nós w adjacentes a v fazer
+    Se num[w] ainda não está definido então /* Tree Edge */
+      dfs art(w) ; low[v] ← min(low[v], low[w])
+      Se low[w] ≥ num[v] ent˜ao
+        escrever(v + ”é um ponto de articulação”)
+    Senão se w está em S então /* Back Edge */
+      low[v] ← min(low[v], num[w])
+  S.pop()
+
+----------------------------------------------------------------------------------
+CODE
+----------------------------------------------------------------------------------
+-- Ordenação Topológica
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX 25
+
+int n;                        // Numero de nos
+bool adj[MAX][MAX];           // Matriz de adjacencias
+bool visited[MAX];            // Visitados
+int order[MAX], norder;
+
+void dfs(int v) {
+  visited[v] = true;
+  for(int i = 1; i <= n; i++) {
+    if (adj[v][i] && !visited[i])
+      dfs(i);
+  }
+  order[norder++] = v;
+}
+
+int main() {
+  int e, a, b;
+
+  scanf("%d", &n);
+  scanf("%d", &e);
+
+  for(int i = 0; i < e; i++) {
+    scanf("%d %d", &a, &b);
+    adj[a][b] = true;
+  }
+
+  norder = 0;
+  for(int i = 1; i < n; i++){
+    if(!visited[i]){
+      dfs(i);
+    }
+  }
+  for(int i = n-1; i >= 0; i--) {
+    printf("%d ", order[i]);
+  }
+  printf("\n");
+  return 0;
+}
+
+
+-- DAA025
+public class DAA025 {
+  static int n;              // Nodes number
+  static boolean adj[][];    // Adjacent matrix
+  static boolean visited[];  // Visited matrix
+
+  static int circuitsCounter = 0;
+
+  static void dfs(int v) {
+    visited[v] = true;
+    for (int i = 1; i <= n; i++) {
+      if (adj[v][i] && !visited[i]) {
+        dfs(i);
+      }
+    }
+  }
+    
+  public static void main(String args[]) {
+    FastScanner in = new FastScanner(System.in);
+    
+    // Read number of nodes
+    n = in.nextInt();
+    
+    // Create adjacent and visited arrays
+	  adj = new boolean[n+1][n+1];
+    visited = new boolean[n+1];
+    
+    // Read number of edges and read edges
+	  int edges = in.nextInt();	
+	  for (int i = 0; i < edges; i++) {
+	    int a = in.nextInt();
+      int b = in.nextInt();
+
+	    adj[a][b] = adj[b][a] = true;
+    }
+    
+    // Start a DFS on all unvisited nodes
+    for (int i = 1; i < adj.length; i++) {
+      if (!visited[i]) {
+        circuitsCounter++;
+        dfs(i);
+      }
+    }
+
+    FastPrint.out.println(circuitsCounter);
+    FastPrint.out.close();
+  }
+}
+
+-- DAA026
+import java.util.*;
+
+public class DAA026 {
+  static int cases;
+  static int rows;
+  static int columns;
+  static boolean map[][];
+
+  static int currentBlobSize;
+  static int maximumBlobSize;
+  static boolean visited[][];
+
+  static void dfs(int x, int y) {
+    if (!(x >= 0 && x < rows && y >= 0 && y < columns)) return;
+
+    if (!visited[x][y]) {
+      visited[x][y] = true;
+
+      if (map[x][y]) {
+        currentBlobSize++;
+
+        // Left and right
+        dfs(x+1, y);
+        dfs(x-1, y);
+
+        // Up and down
+        dfs(x, y+1);
+        dfs(x, y-1);
+
+        // Diagonal
+        dfs(x-1, y-1);
+        dfs(x+1, y-1);
+        dfs(x-1, y+1);
+        dfs(x+1, y+1);
+      }
+    }
+  }
+
+  public static void main(String args[]) {
+    FastScanner in = new FastScanner(System.in);
+
+    String line;
+
+    // Read number of cases
+    cases = in.nextInt();
+    for (int i = 0; i < cases; i++) {
+      rows = in.nextInt();
+      columns = in.nextInt();
+      maximumBlobSize = 0;
+
+      // Create graph map and visited map
+      map = new boolean[rows][columns];
+      visited = new boolean[rows][columns];
+      for (int r = 0; r < rows; r++) {
+        line = in.nextLine();
+
+        for (int c = 0; c < columns; c++) {
+          if (line.charAt(c) == '.') map[r][c] = false;
+          else map[r][c] = true;
+        }
+      }
+      
+      // Start DFS on all unvisited occupied cells
+      int blobCounter = 1;
+      for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < columns; c++) {
+          if (!visited[r][c] && map[r][c]) {
+            currentBlobSize = 0;
+            dfs(r, c);
+            
+            // Update current map's maximum blob size
+            maximumBlobSize = Math.max(maximumBlobSize, currentBlobSize);
+          }
+        }
+      }
+      
+      // Print maximum blob size
+      FastPrint.out.println(maximumBlobSize);
+    }
+
+    FastPrint.out.close();
+  }
+}
+
+-- DAA027
+import java.util.*;
+
+public class DAA027 {
+  static int cases;
+  static int nodes;
+  static int edges;
+
+  static boolean adj[][];
+  static boolean visited[];
+  static int colors[];
+
+  static boolean dfs(int v) {
+    for (int i = 1; i <= nodes; i++) {
+      if (adj[v][i]) {
+        if (!visited[i]) {
+          visited[i] = true;
+          colors[i] = colors[v] == 1 ? 2 : 1;
+
+          if (!dfs(i)) return false;
+        } else if (colors[i] == colors[v]) return false;
+      }
+    }
+
+    return true;
+  }
+
+  public static void main(String args[]) {
+    FastScanner in = new FastScanner(System.in);
+
+    // Read number of cases
+    cases = in.nextInt();
+    for (int i = 0; i < cases; i++) {
+      nodes = in.nextInt();
+      edges = in.nextInt();
+      
+      adj = new boolean[nodes+1][nodes+1];
+      visited = new boolean[nodes+1];
+      colors = new int[nodes+1];
+
+      // Read edges
+      for (int e = 0; e < edges; e++) {
+        int a = in.nextInt();
+        int b = in.nextInt();
+
+        adj[a][b] = adj[b][a] = true;
+      }
+
+      // Set first node color and visited status
+      visited[1] = true;
+      colors[1] = 1;
+
+      // Check if graph can be bipartite
+      boolean bipartite = dfs(1);
+      if (bipartite) FastPrint.out.println("sim");
+      else FastPrint.out.println("nao");
+    }
+
+    FastPrint.out.close();
+  }
+}
+
+-- DAA030
+import java.io.*;
+import java.util.*;
+
+class Node {
+  public LinkedList<Integer> adj; // Adjacent nodes list
+  public boolean visited;         // Visited boolean status
+  public int distance;            // Distance to origin node
+
+  Node() {
+	  adj = new LinkedList<Integer>();
+  }
+}
+
+class Graph {
+  int n;           // Nodes number
+  Node nodes[];    // Nodes array
+
+  // Constructor
+  Graph(int n) {
+	  this.n = n;
+
+    // Read nodes
+    nodes  = new Node[n+1];
+	  for (int i = 1; i <= n; i++)
+	    nodes[i] = new Node();
+  }
+
+  // Link two nodes
+  public void addLink(int a, int b) {
+	  nodes[a].adj.add(b);
+	  nodes[b].adj.add(a);
+  }
+
+  // Algoritmo de pesquisa em largura
+  public int bfs(int v) {
+    // Create list of unvisited nodes
+	  LinkedList<Integer> q = new LinkedList<Integer>();
+	  for (int i = 1; i<=n; i++) nodes[i].visited = false;
+
+    // Maximum distance
+    int maxDistance = 0;
+
+    // Add current node but tag it as visited
+	  q.add(v);
+	  nodes[v].visited = true;
+	  nodes[v].distance = 0;
+
+    while (q.size() > 0) {
+	    int u = q.removeFirst();
+      maxDistance = Math.max(maxDistance, nodes[u].distance);
+	   
+      // System.out.println(u + " [dist=" + nodes[u].distance + "]");
+	    for (int w : nodes[u].adj) {
+        if (!nodes[w].visited) {
+		      q.add(w);
+		      nodes[w].visited = true;
+		      nodes[w].distance = nodes[u].distance + 1; 
+		    }
+      }
+    }
+
+    return maxDistance;
+  }
+}
+
+public class DAA030 {
+  public static void main(String args[]) {
+	  FastScanner in = new FastScanner(System.in);
+
+    // Read number of nodes and create new graph
+	  int nodes = in.nextInt();
+    Graph g = new Graph(nodes);
+
+    // Read number of edges and read all connections
+    int e = in.nextInt();
+    for (int i = 0; i < e; i++)
+	    g.addLink(in.nextInt(), in.nextInt());
+
+	  int diameter = 0;
+    int radius = nodes+1;
+    int[] centralNodes;
+    int[] periphericalNodes;
+
+    // Start BFS at all nodes until the whole graph has been searched
+    for (int i = 1; i <= nodes; i++) {
+      diameter = Math.max(diameter, g.bfs(i));
+      radius = Math.min(radius, g.bfs(i));
+    }
+
+    // Print diameter and radius
+    FastPrint.out.println(diameter);
+    FastPrint.out.println(radius);
+
+    // Print the central and peripherical nodes
+    boolean firstValue = true;
+    for (int i = 1; i <= nodes; i++) {
+      if (g.bfs(i) == radius) {
+        if (!firstValue) FastPrint.out.printf(" ");
+        else firstValue = false;
+
+        FastPrint.out.printf("%d", i);
+      }
+    }
+    FastPrint.out.println();
+
+    firstValue = true;
+    for (int i = 1; i <= nodes; i++) {
+      if (g.bfs(i) == diameter) {
+        if (!firstValue) FastPrint.out.printf(" ");
+        else firstValue = false;
+
+        FastPrint.out.printf("%d", i);
+      }
+    }
+    FastPrint.out.println();
+
+    // Close print buffer
+    FastPrint.out.close();
+  }
+}
+
+-- DAA031 (DNF)
+import java.io.*;
+import java.util.*;
+
+class Point {
+  public int x;                      // X coordinate
+  public int y;                      // Y coordinate
+  public LinkedList<Point> adj;      // Adjacent points list
+  public int type;                   // Type of point (0 - Nothing 1 - Airport 2 - Cloud)
+  public boolean visited;            // Visited boolean status
+  public int distance;               // Distance to origin node
+
+  Point(int x, int y) {
+	  adj = new LinkedList<Point>();
+  }
+}
+
+class GraphMap {
+  int r;           // Map rows
+  int c;           // Map columns
+  Point points[][];  // Map
+
+  // Constructor
+  GraphMap(int r, int c) {
+	  this.r = r;
+    this.c = c;
+
+    points = new Point[r+1][c+1];
+	  for (int i = 1; i <= r; i++) {
+      for (int j = 0; j < c; j++) {
+        points[i][j+1] = new Point(i, j+1);
+      }
+    }
+  }
+
+  // Link two points
+  public void addLink(int x1, int y1, int x2, int y2) {
+    if ((x1 >= 1 && x1 <= r && y1 >= 1 && y1 <= c) &&
+      (x2 >= 1 && x2 <= r && y2 >= 1 && y2 <= c)) {
+      points[x1][y1].adj.add(points[x2][y2]);
+      points[x2][y2].adj.add(points[x1][y1]);
+    }
+  }
+
+  // BFS algorithm
+  public int bfs(int x, int y) {
+    // Create list of unvisited points
+	  LinkedList<Point> q = new LinkedList<Point>();
+	  for (int i = 1; i <= r; i++) {
+      for (int j = 1; j <= c; j++)
+        points[i][j].visited = false;
+    }
+
+    // Maximum distance
+    int maxDistance = 0;
+
+    // Add current node but tag it as visited
+	  q.add(points[x][y]);
+	  points[x][y].visited = true;
+	  points[x][y].distance = 0;
+
+    while (q.size() > 0) {
+	    Point currPoint = q.removeFirst();
+      // if (currPoint.type == 1) {
+      //   FastPrint.out.printf("Max %d\n", maxDistance);
+      //   maxDistance = Math.max(maxDistance, currPoint.distance);
+      // }
+      maxDistance = Math.max(maxDistance, currPoint.distance);
+	   
+      // System.out.println(u + " [dist=" + nodes[u].distance + "]");
+	    for (Point w : currPoint.adj) {
+        if (!w.visited) {
+		      q.add(w);
+		      w.visited = true;
+		      w.distance = w.distance + 1;
+		    }
+      }
+    }
+
+    return maxDistance;
+  }
+}
+
+public class DAA031 {
+  public static void main(String args[]) {
+	  FastScanner in = new FastScanner(System.in);
+
+    // Read rows and columns number
+    int rows;
+    int columns;
+    rows = in.nextInt();
+    columns = in.nextInt();
+
+    // Create graph
+    GraphMap g = new GraphMap(rows, columns);
+
+    // Read map
+    String line;
+	  for (int i = 1; i <= rows; i++) {
+      line = in.nextLine();
+
+      for (int j = 0; j < columns; j++) {
+        if (line.charAt(j) == '.')
+          g.points[i][j+1].type = 0;
+        
+        if (line.charAt(j) == 'A')
+          g.points[i][j+1].type = 1;
+
+        if (line.charAt(j) == '#')
+          g.points[i][j+1].type = 2;
+
+        // Add adjacent points
+        // Left and right
+        g.addLink(i, j, i, j-1);
+        g.addLink(i, j, i, j+1);
+
+        // Top and bottom
+        g.addLink(i, j, i-1, j);
+        g.addLink(i, j, i+1, j);
+      }
+    }
+
+    int diameter = 0;
+    int radius = 100000;
+
+    // Start BFS at all nodes until the whole graph has been searched
+    for (int r = 1; r <= rows; r++) {
+      for (int c = 1; c <= columns; c++) {
+        if (g.points[r][c].type == 1) {
+          diameter = Math.max(diameter, g.bfs(r, c));
+          break;
+        }
+      }
+    }
+
+    for (int r = 1; r <= rows; r++) {
+      for (int c = 1; c <= columns; c++) {
+        g.points[r][c].distance = 0;
+      }
+    }
+
+    for (int r = 1; r <= rows; r++) {
+      for (int c = 1; c <= columns; c++) {
+        if (g.points[r][c].type == 1) {
+          radius = Math.min(radius, g.bfs(r, c));
+          break;
+        }
+      }
+    }
+
+
+    FastPrint.out.printf("%d %d\n", radius+1, diameter+1);
+
+    // Close print buffer
+    FastPrint.out.close();
+  }
+}
+
+-- DAA033 (DNF)
+import java.util.*;
+
+class Edge {
+  int to;     // No destino
+  int weight; // Peso da aresta
+    
+  Edge(int t, int w) {
+  	to = t;
+	  weight = w;
+  }
+}
+
+class Node {
+  public LinkedList<Edge> adj; // Lista de adjacencias
+  public boolean visited;      // No ja foi visitado?
+  public int distance;         // Distancia ao no origem da pesquisa
+  
+  Node() {
+	  adj = new LinkedList<>();
+  } 
+};
+
+// Classe que representa um no para ficar na fila de prioridade
+class NodeQ implements Comparable<NodeQ> {
+  public int cost;
+  public int node;
+
+  NodeQ(int c, int n) {
+	  cost = c;
+	  node = n;
+  }
+
+  @Override
+  public int compareTo(NodeQ nq) { 
+    if (cost < nq.cost) return -1; 
+    if (cost > nq.cost) return +1;
+    if (node < nq.node) return -1; 
+	  if (node > nq.node) return +1;
+    return 0; 
+  } 
+}
+
+class Graph {
+  int n;
+  Node[] nodes;
+    
+  Graph(int n) {
+	  this.n = n;
+	  nodes = new Node[n+1];  // +1 se os nos comecam em 1 ao inves de 0
+	  
+    for (int i=1; i<=n; i++)
+	    nodes[i] = new Node();
+  }
+    
+  void addLink(int a, int b, int c) {
+	  nodes[a].adj.add(new Edge(b, c));
+  }
+
+  // Algoritmo de Dijkstra
+  void dijkstra(int s) {
+    //Inicializar nos como nao visitados e com distancia infinita
+    for (int i=1; i<=n; i++) {
+      nodes[i].distance = Integer.MAX_VALUE;
+      nodes[i].visited  = false;
+    }
+	
+    // Inicializar "fila" com no origem
+    nodes[s].distance = 0;
+    TreeSet<NodeQ> q = new TreeSet<>();
+    q.add(new NodeQ(0, s)); // Criar um par (dist=0, no=s)
+
+    // Ciclo principal do Dijkstra
+    while (!q.isEmpty()) {
+        
+        // Retirar no com menor distancia (o "primeiro" do set, que e uma BST)
+        NodeQ nq = q.pollFirst();
+        int  u = nq.node;
+        nodes[u].visited = true;
+        System.out.println(u + " [dist=" + nodes[u].distance + "]");
+        
+        // Relaxar arestas do no retirado
+        for (Edge e : nodes[u].adj) {
+      int v = e.to;
+      int cost = e.weight;
+      if (!nodes[v].visited && nodes[u].distance + cost < nodes[v].distance) {
+          q.remove(new NodeQ(nodes[v].distance, v)); // Apagar do set
+          nodes[v].distance = nodes[u].distance + cost;
+          q.add(new NodeQ(nodes[v].distance, v));    // Inserir com nova (e menor) distancia
+      }
+        }
+    }
+  }
+}
+
+public class dijkstra {
+  public static void main(String args[]) {
+    Scanner in = new Scanner(System.in);
+    
+    int n = in.nextInt();
+    Graph g = new Graph(n);
+
+    int e = in.nextInt();
+    for (int i = 0; i < e; i++) 
+      g.addLink(in.nextInt(), in.nextInt(), in.nextInt());
+
+    // Execucao exemplo a partir do no 1
+    g.dijkstra(1);
+  }
+}
+
+-- DAA035
+import java.util.*;
+
+public class DAA035{
+	static void floydMarshall(int[][] matrix, int n) {
+    boolean[][] connected = new boolean[n][n];
+    for (int i = 0; i < n; i++)
+      connected[i][i] = true;
+
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++)
+        if(matrix[i][j] == 1) connected[i][j] = true;
+    }
+    
+    for (int k = 0; k < n; k++) {
+      for (int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++)
+          if (connected[i][k] && connected[k][j]) connected[i][j] = true;
+      }
+    }
+    
+    System.out.print(" ");
+    for (int i = 0; i < n; i++) {
+      int tmp = 'A' + i;
+      char c = (char) tmp;
+
+      System.out.print(" " + c);
+    }
+    System.out.println();
+
+		for (int i = 0; i < n; i++) {
+			int tmp = 'A' + i;
+      char a = (char) tmp;
+      System.out.print(a);
+
+      for (int j = 0; j < n; j++) {
+        if (connected[i][j]) System.out.print(" 1");
+        else System.out.print(" 0");
+		  }
+
+      System.out.println();
+    }
+  }
+
+	public static void main(String[] args) {
+		FastScanner in = new FastScanner(System.in);
+		int n = in.nextInt();
+		int[][] matrix = new int[n][n];
+
+		for (int i = 0; i < n; i++) {
+			char c = in.next().charAt(0);
+			int pos1 = c - 'A';
+			int numDist = in.nextInt();
+			
+      for (int j = 0; j < numDist; j++) {
+				int pos2 = in.next().charAt(0) - 'A';
+				matrix[pos1][pos2] = 1;
+			}
+		}
+
+		floydMarshall(matrix, n);
+	}
+}
